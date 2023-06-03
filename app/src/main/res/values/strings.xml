@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CarBooking</string>
+    <string name="search">Search</string>
+    <string name="model">Model: %s </string>
+    <string name="price">Price: %s %s</string>
+    <string name="empty_search">Please Enter Search Key</string>
+    <string name="something_wrong">Something Wrong</string>
+</resources>
