@@ -1,6 +1,7 @@
 package com.generation.car.booking.booking.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -26,14 +27,14 @@ fun CarCard(
     modifier: Modifier = Modifier, car: Car
 ) {
     Row(
-        modifier = modifier,
+        modifier,
     ) {
         Icon(
             Icons.Rounded.CarRental,
             contentDescription = null,
             tint = Color("${car.color}".toColorInt()),
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .padding(12.dp)
                 .background(color = Color.Gray.copy(alpha = .2f))
                 .padding(12.dp)
                 .size(32.dp)
