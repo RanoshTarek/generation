@@ -10,23 +10,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.generation.car.booking.booking.viewmodel.CarViewModel
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.generation.car.booking.booking.ui.CarCard
 import com.generation.car.booking.ui.theme.Dimensions
 import com.generation.car.booking.utils.Response
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.generation.car.booking.R
-import com.generation.car.booking.booking.data.Car
 import com.generation.car.booking.navigation.Routes
 import com.google.gson.Gson
-import com.squareup.moshi.Moshi
 
 @Composable
 fun CarFragment(
@@ -34,9 +30,9 @@ fun CarFragment(
     modifier: Modifier = Modifier,
     carViewModel: CarViewModel = koinViewModel(),
 ) {
-    var text by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    val openDialog = remember { mutableStateOf(false) }
+    var searchBrandName by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    val openDialog = rememberSaveable { mutableStateOf(false) }
 
     carViewModel.getAllCar()
     Surface(
@@ -57,11 +53,11 @@ fun CarFragment(
                 OutlinedTextField(modifier = modifier
                     .weight(1f)
                     .padding(Dimensions().padding_4),
-                    value = text,
+                    value = searchBrandName,
                     onValueChange = {
-                        if (text != it) {
-                            text = it
-                            carViewModel.getAllCar()
+                        if (searchBrandName != it) {
+                            searchBrandName = it
+                            carViewModel.getAllCar(carBrand = searchBrandName)
                         }
                         Log.e("Search", "$it")
                     },
@@ -96,7 +92,7 @@ fun CarFragment(
                             TextField(
                                 value = price,
                                 onValueChange = {
-                                    if (it.toInt() > 0)
+                                    if (it.toDouble() > 0)
                                         price = it
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -109,15 +105,27 @@ fun CarFragment(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Button(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.weight(weight = 1f),
                                 onClick = {
                                     openDialog.value = false
                                     if (price.isNotEmpty()) {
-                                        carViewModel.getAllCar()
+                                        carViewModel.getAllCar(carPrice = price.toDouble())
                                     }
                                 }
                             ) {
                                 Text(stringResource(id = R.string.confirm))
+                            }
+                            Box(modifier = modifier.width(Dimensions().padding_4))
+
+                            Button(
+                                modifier = Modifier.weight(weight = 1f),
+                                onClick = {
+                                    openDialog.value = false
+                                    price = ""
+                                    carViewModel.getAllCar(carPrice = null)
+                                }
+                            ) {
+                                Text(stringResource(id = R.string.clear))
                             }
                         }
                     }
@@ -132,7 +140,9 @@ fun CarFragment(
                 }
                 is Response.Success -> {
                     carsResponse.data?.cars?.size
-
+                    if(carsResponse.data?.cars?.isEmpty() == true){
+                        Text(text = stringResource(id = R.string.not_found))
+                    }
                     LazyVerticalGrid(
                         modifier = modifier,
                         columns = GridCells.Fixed(1),

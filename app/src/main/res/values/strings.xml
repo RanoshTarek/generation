@@ -5,7 +5,9 @@
     <string name="price">Price: %s %s</string>
     <string name="empty_search">Please Enter Search Key</string>
     <string name="something_wrong">Something Wrong</string>
+    <string name="not_found">Not found</string>
     <string name="filter_by_price">Filter By Price</string>
     <string name="confirm">Filter By Price</string>
+    <string name="clear">Clear</string>
 
 </resources>
